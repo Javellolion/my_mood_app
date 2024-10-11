@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1031899319245",
+    "project_id": "my-mood-app-578b9",
+    "storage_bucket": "my-mood-app-578b9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031899319245:android:3e80052ce6aaa2504d5284",
+        "android_client_info": {
+          "package_name": "com.example.my_mood_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoulSf00VQiTxomOQeVI9ggOqpv0-JecI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
