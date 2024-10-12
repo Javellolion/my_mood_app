@@ -22,7 +22,7 @@ class _NotificationPageState extends State<NotificationPage> {
     super.initState();
     tz.initializeTimeZones();
     final InitializationSettings initializationSettings =
-        InitializationSettings(
+        const InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       //iOS: IOSInitializationSettings(),
     );
@@ -46,7 +46,7 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
         //iOS: IOSNotificationDetails(),
       ),
-      androidAllowWhileIdle: true,
+      //androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: isDaily ? DateTimeComponents.time : null,
