@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:my_mood_app/store_data.dart'; // นำเข้า StoreData
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_database/firebase_database.dart';
 
 class AddEmo extends StatefulWidget {
   const AddEmo({super.key});
@@ -19,6 +20,8 @@ class _AddEmoState extends State<AddEmo> {
   StoreData info = StoreData(); // อินสแตนซ์ของคลาส StoreData เพื่อเก็บข้อมูล
   //เตรียม Firebase
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
+  CollectionReference storeData =
+      FirebaseFirestore.instance.collection("daily");
 
   // รายการของอารมณ์ต่างๆ พร้อมกับพาร์ทของไฟล์รูปภาพ
   final Map<String, String> emotions = {
@@ -183,12 +186,18 @@ class _AddEmoState extends State<AddEmo> {
         ),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             formKey.currentState!.save();
-            // แสดงข้อมูลที่ถูกเก็บ
-            // print("Selected Emotion: ${info.pathEmotion}");
-            // print("Daily Text: ${info.dailyText}");
-            // print("Feeling Level: ${info.levelEmotion}");
+            await storeData.add({
+              "pathEmotion": info.pathEmotion,
+              "dailyText": info.dailyText,
+              "levelEmotion": info.levelEmotion
+            });
+            formKey.currentState!.reset();
+            //แสดงข้อมูลที่ถูกเก็บ
+            print("Selected Emotion: ${info.pathEmotion}");
+            print("Daily Text: ${info.dailyText}");
+            print("Feeling Level: ${info.levelEmotion}");
           },
           child: const Text("Submit"),
         ),

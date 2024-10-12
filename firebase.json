@@ -1,0 +1,29 @@
+{
+    "firestore": {
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "my-mood-app-578b9",
+                    "appId": "1:1031899319245:android:3e80052ce6aaa2504d5284",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "my-mood-app-578b9",
+                    "configurations": {
+                        "android": "1:1031899319245:android:3e80052ce6aaa2504d5284",
+                        "ios": "1:1031899319245:ios:675ac32c47b6a7d54d5284",
+                        "macos": "1:1031899319245:ios:675ac32c47b6a7d54d5284",
+                        "web": "1:1031899319245:web:4b385c1645f365824d5284",
+                        "windows": "1:1031899319245:web:ec4935ce97f7b13d4d5284"
+                    }
+                }
+            }
+        }
+    }
+}

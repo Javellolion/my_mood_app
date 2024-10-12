@@ -4,8 +4,13 @@ import 'package:my_mood_app/add_emo.dart';
 import 'package:my_mood_app/overall_emo.dart';
 import 'package:my_mood_app/notificationpage.dart';
 import 'package:my_mood_app/profile.dart';
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core package
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensures Flutter engine is initialized
+  await Firebase.initializeApp(); // Initialize Firebase
+
   runApp(const MyApp());
 }
 
@@ -16,7 +21,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     return MaterialApp(
-      //title: "Hello Flutter",
       home: Scaffold(
         drawer: Builder(
           builder: (BuildContext newContext) {
