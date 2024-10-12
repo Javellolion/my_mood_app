@@ -1,0 +1,6 @@
+{
+  "firestore": {
+    "rules": "datastore.rules",
+    "indexes": "firebase.json"
+  }
+}
