@@ -5,8 +5,12 @@ import 'package:my_mood_app/overall_emo.dart';
 import 'package:my_mood_app/notificationpage.dart';
 import 'package:my_mood_app/profile.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core package
+import 'package:my_mood_app/FetchDataFromFirebase.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // import cloud_firestore
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

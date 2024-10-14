@@ -105,52 +105,8 @@ void initState() {
   tz.initializeTimeZones();
 }
 
-<<<<<<< Updated upstream
-class _NotificationPageState extends State<NotificationPage> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  DateTime? selectedDateTime;
-  bool isDaily = false;
-
-  @override
-  void initState() {
-    super.initState();
-    tz.initializeTimeZones();
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      //iOS: IOSInitializationSettings(),
-    );
-    flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
-
-  Future<void> _scheduleNotification() async {
-    if (selectedDateTime == null) return;
-
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'Mood&Feel',
-      'Time to Note!',
-      tz.TZDateTime.from(selectedDateTime!, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_notification_channel_id',
-          'Daily Notifications',
-          channelDescription: 'notification for note',
-          importance: Importance.high,
-        ),
-        //iOS: IOSNotificationDetails(),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: isDaily ? DateTimeComponents.time : null,
-    );
-  }
-=======
 class Notificationpage extends StatelessWidget {
   const Notificationpage({super.key});
->>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {

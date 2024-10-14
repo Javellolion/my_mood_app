@@ -41,14 +41,12 @@ dependencies:
   flutter_local_notifications: ^17.2.3
   timezone: ^0.9.4
   firebase_core: ^3.6.0
-<<<<<<< Updated upstream
-=======
   cloud_firestore: ^5.4.4
   firebase_database: ^11.1.4
   flutter_spinkit: ^5.2.1
   permission_handler: ^11.3.1
   mockito: ^5.4.4
->>>>>>> Stashed changes
+
 
 
 dev_dependencies:

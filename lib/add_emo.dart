@@ -3,7 +3,7 @@ import 'package:my_mood_app/main.dart';
 //import 'package:intl/intl.dart';
 import 'package:my_mood_app/store_data.dart'; // นำเข้า StoreData
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class AddEmo extends StatefulWidget {
   const AddEmo({super.key});
@@ -18,12 +18,9 @@ class _AddEmoState extends State<AddEmo> {
   double value = 0; // เก็บระดับความรู้สึก
   final formKey = GlobalKey<FormState>();
   StoreData info = StoreData(); // อินสแตนซ์ของคลาส StoreData เพื่อเก็บข้อมูล
-  //เตรียม Firebase
-  final Future<FirebaseApp> firebase = Firebase.initializeApp();
   CollectionReference storeData =
       FirebaseFirestore.instance.collection("daily");
 
-  // รายการของอารมณ์ต่างๆ พร้อมกับพาร์ทของไฟล์รูปภาพ
   final Map<String, String> emotions = {
     'Accepting': 'assets/images/Accepting.png',
     'Angry': 'assets/images/Angry.png',
@@ -41,106 +38,82 @@ class _AddEmoState extends State<AddEmo> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: firebase,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Scaffold(
-                appBar: AppBar(
-                  title: const Text("Error"),
-                ),
-                body: Center(child: Text("${snapshot.error}")));
-          }
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-                body: Center(
-              child: Form(
-                key: formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Select an Emotion",
-                        style: TextStyle(fontSize: 24)),
-                    const SizedBox(height: 20),
-                    // ใช้ ListWheelScrollView เพื่อเลื่อนแบบวงล้อ
-                    SizedBox(
-                      height: 200, // ขนาดของวงล้อ
-                      child: ListWheelScrollView.useDelegate(
-                        itemExtent: 80, // ขนาดของแต่ละรายการ
-                        physics: const FixedExtentScrollPhysics(),
-                        onSelectedItemChanged: (index) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Add Emotion"),
+      ),
+      body: Center(
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Select an Emotion", style: TextStyle(fontSize: 24)),
+              const SizedBox(height: 20),
+              // ใช้ ListWheelScrollView เพื่อเลื่อนแบบวงล้อ
+              SizedBox(
+                height: 200,
+                child: ListWheelScrollView.useDelegate(
+                  itemExtent: 80,
+                  physics: const FixedExtentScrollPhysics(),
+                  onSelectedItemChanged: (index) {
+                    setState(() {
+                      selectedEmotion = emotions.keys.elementAt(index);
+                      info.pathEmotion = emotions[selectedEmotion]!;
+                      showForm = true;
+                    });
+                  },
+                  childDelegate: ListWheelChildBuilderDelegate(
+                    builder: (context, index) {
+                      final emotion = emotions.keys.elementAt(index);
+                      bool isSelected = selectedEmotion == emotion;
+                      return GestureDetector(
+                        onTap: () {
                           setState(() {
-                            selectedEmotion =
-                                emotions.keys.elementAt(index); // เลือกอารมณ์
-                            info.pathEmotion = emotions[
-                                selectedEmotion]!; // เก็บพาร์ทของไฟล์รูปภาพ
-                            showForm = true; // แสดงฟอร์มเมื่อเลือกอารมณ์แล้ว
+                            selectedEmotion = emotion;
+                            info.pathEmotion = emotions[emotion]!;
+                            showForm = true;
                           });
                         },
-                        childDelegate: ListWheelChildBuilderDelegate(
-                          builder: (context, index) {
-                            final emotion = emotions.keys.elementAt(index);
-                            bool isSelected = selectedEmotion == emotion;
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedEmotion = emotion;
-                                  info.pathEmotion = emotions[
-                                      emotion]!; // เก็บพาร์ทของไฟล์รูปภาพใน StoreData
-                                  showForm = true;
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  ClipOval(
-                                    child: Image.asset(
-                                      emotions[emotion]!,
-                                      width: isSelected
-                                          ? 80
-                                          : 60, // ขนาดรูปเมื่อเลือกใหญ่ขึ้น
-                                      height: isSelected
-                                          ? 70
-                                          : 60, // ขนาดรูปเมื่อเลือกใหญ่ขึ้น
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                ],
+                        child: Column(
+                          children: [
+                            ClipOval(
+                              child: Image.asset(
+                                emotions[emotion]!,
+                                width: isSelected ? 80 : 60,
+                                height: isSelected ? 70 : 60,
+                                fit: BoxFit.cover,
                               ),
-                            );
-                          },
-                          childCount: emotions.length,
+                            ),
+                            const SizedBox(height: 10),
+                          ],
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    // ฟอร์มที่แสดงขึ้นมาหลังจากเลือกอารมณ์แล้ว
-                    AnimatedOpacity(
-                      opacity: showForm ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 500),
-                      child: showForm ? _buildForm() : const SizedBox.shrink(),
-                    ),
-                  ],
+                      );
+                    },
+                    childCount: emotions.length,
+                  ),
                 ),
               ),
-            ));
-          }
-
-          //ฟังก์ชันสร้างฟอร์ม
-
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        });
+              const SizedBox(height: 40),
+              AnimatedOpacity(
+                opacity: showForm ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                child: showForm ? _buildForm() : const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildForm() {
     return Column(
       children: [
-        Text("$selectedEmotion", // อารมณ์ที่ผู้ใช้เลือก
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text(
+          "$selectedEmotion",
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -150,8 +123,7 @@ class _AddEmoState extends State<AddEmo> {
               border: OutlineInputBorder(),
             ),
             onSaved: (String? value) {
-              info.dailyText =
-                  value ?? ''; // เก็บข้อความที่ผู้ใช้กรอกลงใน StoreData
+              info.dailyText = value ?? '';
             },
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -162,25 +134,21 @@ class _AddEmoState extends State<AddEmo> {
           ),
         ),
         const SizedBox(height: 20),
-
-        // ใช้ Padding แยกออกจาก Slider
         const Text("How much level your feeling."),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Slider(
             value: value,
             max: 10,
-            divisions: 10, // ถ้าอยากให้มี 10 ระดับ
+            divisions: 10,
             label: value.round().toString(),
             onChanged: (double currentValue) {
               setState(() {
                 value = currentValue;
-                //info.levelEmotion = currentValue as String?;
               });
             },
             onChangeEnd: (double currentValue) {
-              info.levelEmotion =
-                  currentValue.toString(); // เก็บระดับความรู้สึกลงใน StoreData
+              info.levelEmotion = currentValue.toString();
             },
           ),
         ),
@@ -188,16 +156,60 @@ class _AddEmoState extends State<AddEmo> {
         ElevatedButton(
           onPressed: () async {
             formKey.currentState!.save();
+
+            // ตรวจสอบว่ามีการบันทึกในวันเดียวกันแล้วหรือไม่
+            final today = DateTime.now();
+            final startOfDay = DateTime(today.year, today.month, today.day);
+            final endOfDay =
+                DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+            final querySnapshot = await storeData
+                .where('createAt', isGreaterThanOrEqualTo: startOfDay)
+                .where('createAt', isLessThanOrEqualTo: endOfDay)
+                .get();
+
+            if (querySnapshot.docs.isNotEmpty) {
+              // หากมีการบันทึกแล้ว แสดงข้อความแจ้งเตือน
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text("You can only add your emotion once a day!")),
+              );
+              return;
+            }
+
+            // ถ้ายังไม่เคยบันทึก ให้บันทึกข้อมูล
             await storeData.add({
               "pathEmotion": info.pathEmotion,
               "dailyText": info.dailyText,
-              "levelEmotion": info.levelEmotion
+              "levelEmotion": info.levelEmotion,
+              "createAt": FieldValue.serverTimestamp(),
             });
+
             formKey.currentState!.reset();
-            //แสดงข้อมูลที่ถูกเก็บ
-            print("Selected Emotion: ${info.pathEmotion}");
-            print("Daily Text: ${info.dailyText}");
-            print("Feeling Level: ${info.levelEmotion}");
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SpinKitCircle(
+                        color: Colors.green,
+                        size: 50.0,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text("Data has been saved!"),
+                    ],
+                  ),
+                );
+              },
+            );
+            await Future.delayed(const Duration(seconds: 2));
+            Navigator.of(context).pop(); // ปิด dialog
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => MyApp()),
+            );
           },
           child: const Text("Submit"),
         ),
