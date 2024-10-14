@@ -4,6 +4,7 @@ import 'package:my_mood_app/add_emo.dart';
 import 'package:my_mood_app/overall_emo.dart';
 import 'package:my_mood_app/notificationpage.dart';
 import 'package:my_mood_app/profile.dart';
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core package
 
 void main() {
   runApp(const MyApp());
@@ -48,7 +49,7 @@ class MyApp extends StatelessWidget {
                     onTap: () {
                       Navigator.of(newContext).push(
                         MaterialPageRoute(
-                          builder: (context) => const NotificationPage(),
+                          builder: (context) => const Notificationpage(),
                         ),
                       );
                     },
@@ -77,21 +78,39 @@ class MyApp extends StatelessWidget {
         ),
         body: Stack(
           children: [
+            Positioned.fill(
+              child: Fetchdatafromfirebase(), // แทรก Fetchdatafromfirebase
+            ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 40.0),
                 child: Builder(
                   builder: (BuildContext buttonContext) {
-                    return FilledButton(
-                      onPressed: () {
-                        Navigator.push(
-                          buttonContext,
-                          MaterialPageRoute(
-                              builder: (context) => const AddEmo()),
-                        );
+                    return FutureBuilder<bool>(
+                      future: _checkIfEmotionAddedToday(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator(); // แสดงโลดริ้งระหว่างตรวจสอบ
+                        } else if (snapshot.hasError) {
+                          return Text("Error: ${snapshot.error}");
+                        } else if (!snapshot.data!) {
+                          // หากไม่มีการบันทึกในวันนี้ ให้แสดงปุ่ม
+                          return FilledButton(
+                            onPressed: () {
+                              Navigator.push(
+                                buttonContext,
+                                MaterialPageRoute(
+                                    builder: (context) => const AddEmo()),
+                              );
+                            },
+                            child: const Icon(Icons.add),
+                          );
+                        }
+                        return const SizedBox
+                            .shrink(); // หากมีการบันทึกแล้ว ไม่แสดงปุ่ม
                       },
-                      child: const Icon(Icons.add),
                     );
                   },
                 ),
@@ -101,5 +120,19 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<bool> _checkIfEmotionAddedToday() async {
+    final today = DateTime.now();
+    final startOfDay = DateTime(today.year, today.month, today.day);
+    final endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59);
+
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection("daily")
+        .where('createAt', isGreaterThanOrEqualTo: startOfDay)
+        .where('createAt', isLessThanOrEqualTo: endOfDay)
+        .get();
+
+    return querySnapshot.docs.isNotEmpty; // คืนค่า true หากมีการบันทึกในวันนี้
   }
 }

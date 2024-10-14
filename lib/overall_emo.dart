@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:my_mood_app/noteScreen/noteweek.dart';
+import 'package:my_mood_app/noteScreen/notemonth.dart';
+import 'package:my_mood_app/noteScreen/noteyear.dart';
 
 class OverallEmo extends StatefulWidget {
   const OverallEmo({super.key});
@@ -31,9 +34,9 @@ class _OverallEmo extends State<OverallEmo> {
           ),
           body: TabBarView(
             children: [
-              Center(child: Text("week information")),
-              Center(child: Text("month information")),
-              Center(child: Text("year information")),
+              Center(child: WeeklyData()),
+              Center(child: MonthlyData()),
+              Center(child: YearlyData()),
             ],
           ),
         ));

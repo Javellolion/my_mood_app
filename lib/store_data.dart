@@ -2,5 +2,12 @@ class StoreData {
   String? pathEmotion;
   String? dailyText;
   String? levelEmotion;
-  StoreData({this.pathEmotion, this.dailyText, this.levelEmotion});
+  DateTime? createAt;
+  DateTime? checkTime;
+  StoreData(
+      {this.pathEmotion,
+      this.dailyText,
+      this.levelEmotion,
+      this.createAt,
+      this.checkTime});
 }
